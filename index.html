@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Typing Love Message</title>
+  <style>
+    body {
+      background-color: #fff0f5;
+      font-family: 'Courier New', Courier, monospace;
+      color: #e91e63;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      margin: 0;
+    }
+
+    #message-box {
+      background-color: #fff;
+      border: 2px solid #e91e63;
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 600px;
+      font-size: 1.2rem;
+      white-space: pre-wrap;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      line-height: 1.4;
+      display: none;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      height: 1em;
+      background-color: #e91e63;
+      animation: blink 0.8s infinite;
+      vertical-align: bottom;
+      margin-left: 4px;
+    }
+
+    @keyframes blink {
+      0%, 50%, 100% { opacity: 1; }
+      25%, 75% { opacity: 0; }
+    }
+
+    @media (max-width: 520px) {
+      #message-box { font-size: 1rem; padding: 20px; max-width: 90%; }
+    }
+
+    #start-btn {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 15px 25px;
+      font-size: 1.2rem;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    #start-btn:hover {
+      background-color: #c2185b;
+    }
+  </style>
+</head>
+<body>
+
+  <button id="start-btn">💌 Mulai Pesan</button>
+
+  <!-- Audio: tries embedded base64 first (replace the placeholder), then falls back to music.mp3 -->
+  <audio id="bg-music" loop>
+    <!-- If you used the "embed as base64" method, replace REPLACE_WITH_BASE64 with the actual base64 string -->
+    <source src="data:audio/mpeg;base64,REPLACE_WITH_BASE64" type="audio/mpeg">
+    <!-- Or place a file named music.mp3 next to this index.html and the browser will try it -->
+    <source src="music.mp3" type="audio/mpeg">
+    Browser kamu tidak mendukung pemutar audio.
+  </audio>
+
+  <div id="message-box" aria-live="polite">
+    <span id="text"></span><span class="cursor" aria-hidden="true"></span>
+  </div>
+
+  <script>
+    const message = `Happy birthday raniaa🎉🎉
+ciyee makinn tuaa HAHAHAHA
+Btw aku cuma mau bilang...
+Aku bersyukur banget pernah sedeket itu sama kamu hhe🥺
+Makasih yaa untuk segala hal yang kamu buat ke aku😁.
+Maaf juga udah buat keputusan ga bersama lagi.
+raniaa raniaa
+sejujurnya aku mau kita bersama lagi, aku mau hubungan lebih,
+bahkan ke hal yg lebih serius.😉
+tapi ini keputusan di kamu.
+mungkin kamu belum bisa, aku kemungkinan nunggu kamu, hari ini, dan seterusnya.
+ran
+-that i just want you to know I've found a reason for me to change
+who i used to be A reason to start over new And the reason is you
+-The reason-HOOBASTANK
+btw ini maksud aku dari terusan pesan yg aku pernah kirim ke kamu itu😂
+Aku cinta kamu, hari ini dan seterusnya. 💘`;
+
+    let i = 0;
+    const textEl = document.getElementById('text');
+    const messageBox = document.getElementById('message-box');
+    const music = document.getElementById('bg-music');
+    const startBtn = document.getElementById('start-btn');
+
+    function typeText() {
+      if (i < message.length) {
+        textEl.textContent += message.charAt(i);
+        i++;
+        setTimeout(typeText, 50);
+      }
+    }
+
+    startBtn.addEventListener('click', async () => {
+      try {
+        await music.play(); // user gesture allows playback on mobile
+      } catch (e) {
+        // ignore play errors (some browsers still block); UI will still reveal message
+      }
+      startBtn.style.display = 'none';
+      messageBox.style.display = 'block';
+      typeText();
+    });
+  </script>
+
+</body>
+</html>
