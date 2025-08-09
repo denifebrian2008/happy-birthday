@@ -15,6 +15,7 @@
       flex-direction: column;
       height: 100vh;
       margin: 0;
+      overflow: hidden;
     }
 
     #message-box {
@@ -27,7 +28,7 @@
       white-space: pre-wrap;
       box-shadow: 0 8px 20px rgba(0,0,0,0.1);
       line-height: 1.4;
-      display: none;
+      z-index: 2;
     }
 
     .cursor {
@@ -45,52 +46,72 @@
       25%, 75% { opacity: 0; }
     }
 
-    @media (max-width: 520px) {
-      #message-box { font-size: 1rem; padding: 20px; max-width: 90%; }
-    }
-
-    #start-btn {
+    /* Tombol musik */
+    #music-btn {
+      margin-top: 20px;
       background-color: #e91e63;
       color: white;
       border: none;
-      padding: 15px 25px;
-      font-size: 1.2rem;
-      border-radius: 10px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border-radius: 50px;
       cursor: pointer;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(233, 30, 99, 0.4);
+      z-index: 2;
     }
-    #start-btn:hover {
-      background-color: #c2185b;
+
+    #music-btn:hover {
+      background-color: #d81b60;
+      transform: scale(1.05);
+      box-shadow: 0 6px 15px rgba(233, 30, 99, 0.5);
+    }
+
+    /* Efek hati jatuh */
+    .heart {
+      position: fixed;
+      top: -20px;
+      font-size: 24px;
+      color: #e91e63;
+      animation: fall linear forwards;
+      z-index: 1;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(110vh);
+        opacity: 0;
+      }
+    }
+
+    /* Responsif kecil */
+    @media (max-width: 520px) {
+      #message-box { font-size: 1rem; padding: 20px; max-width: 90%; }
+      #music-btn { font-size: 0.9rem; padding: 8px 15px; }
     }
   </style>
 </head>
 <body>
-
-  <button id="start-btn">💌 Mulai Pesan</button>
-
-  <!-- Audio: tries embedded base64 first (replace the placeholder), then falls back to music.mp3 -->
-  <audio id="bg-music" loop>
-    <!-- If you used the "embed as base64" method, replace REPLACE_WITH_BASE64 with the actual base64 string -->
-    <source src="data:audio/mpeg;base64,REPLACE_WITH_BASE64" type="audio/mpeg">
-    <!-- Or place a file named music.mp3 next to this index.html and the browser will try it -->
-    <source src="music.mp3" type="audio/mpeg">
-    Browser kamu tidak mendukung pemutar audio.
-  </audio>
-
   <div id="message-box" aria-live="polite">
     <span id="text"></span><span class="cursor" aria-hidden="true"></span>
   </div>
 
+  <!-- Tombol Musik -->
+  <button id="music-btn">▶ Putar Musik</button>
+
+  <!-- Audio -->
+  <audio id="bg-music" src="ssstik.io_1754400486480.mp3.m4a"></audio>
+
   <script>
     const message = `Happy birthday raniaa🎉🎉
 ciyee makinn tuaa HAHAHAHA
-Btw aku cuma mau bilang...
+ Btw aku cuma mau bilang...
 Aku bersyukur banget pernah sedeket itu sama kamu hhe🥺
 Makasih yaa untuk segala hal yang kamu buat ke aku😁.
 Maaf juga udah buat keputusan ga bersama lagi.
 raniaa raniaa
 sejujurnya aku mau kita bersama lagi, aku mau hubungan lebih,
-bahkan ke hal yg lebih serius.😉
+bahkan ke hal yg lebih serius.😉 
 tapi ini keputusan di kamu.
 mungkin kamu belum bisa, aku kemungkinan nunggu kamu, hari ini, dan seterusnya.
 ran
@@ -102,9 +123,6 @@ Aku cinta kamu, hari ini dan seterusnya. 💘`;
 
     let i = 0;
     const textEl = document.getElementById('text');
-    const messageBox = document.getElementById('message-box');
-    const music = document.getElementById('bg-music');
-    const startBtn = document.getElementById('start-btn');
 
     function typeText() {
       if (i < message.length) {
@@ -114,17 +132,35 @@ Aku cinta kamu, hari ini dan seterusnya. 💘`;
       }
     }
 
-    startBtn.addEventListener('click', async () => {
-      try {
-        await music.play(); // user gesture allows playback on mobile
-      } catch (e) {
-        // ignore play errors (some browsers still block); UI will still reveal message
+    window.addEventListener('load', typeText);
+
+    // Musik control + efek hati
+    const musicBtn = document.getElementById('music-btn');
+    const bgMusic = document.getElementById('bg-music');
+    let heartInterval;
+
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.classList.add('heart');
+      heart.textContent = '💖';
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
+      document.body.appendChild(heart);
+
+      setTimeout(() => heart.remove(), 5000);
+    }
+
+    musicBtn.addEventListener('click', () => {
+      if (bgMusic.paused) {
+        bgMusic.play();
+        musicBtn.textContent = "⏸ Pause Musik";
+        heartInterval = setInterval(createHeart, 300);
+      } else {
+        bgMusic.pause();
+        musicBtn.textContent = "▶ Putar Musik";
+        clearInterval(heartInterval);
       }
-      startBtn.style.display = 'none';
-      messageBox.style.display = 'block';
-      typeText();
     });
   </script>
-
 </body>
 </html>
